@@ -1,0 +1,19 @@
+# SymTable — COS 217, Assignment 3
+
+Peter & Seb.
+
+## Files
+- `symtable.h` — the interface
+- `symtablelist.c` — linked list implementation
+- `symtablehash.c` — hash table implementation, with expansion
+- `testsymtable.c` — provided by the course; do not touch
+- `Makefile` — builds `testsymtablelist` and `testsymtablehash`
+
+## Build
+    make
+    ./testsymtablelist 1000
+    ./testsymtablehash 1000
+
+## House rules
+- `git pull` before you push.
+- Whoever breaks the build buys coffee.
