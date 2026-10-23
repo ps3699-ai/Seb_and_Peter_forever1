@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* symtablelist.c                                                     */
-/* Author: Peter Strecansky and Seb                                   */
+/* Author: Peter Strecansky and Sebastian Whiteley                    */
 /*--------------------------------------------------------------------*/
 
 #include <assert.h>
@@ -44,8 +44,13 @@ struct SymTable
 
 SymTable_T SymTable_new(void)
 {
-   /* TODO: alokuj, skontroluj NULL, inicializuj polia */
-   return NULL;
+   /* allocate space for struct and check for null/allocation fail*/
+   SymTable_T oSymTable = malloc(sizeof(struct SymTable));
+   if (oSymTable == NULL)
+      return NULL;
+   oSymTable->psFirst = NULL;
+   oSymTable->uLength = 0;
+   return oSymTable;
 }
 
 /*--------------------------------------------------------------------*/
@@ -53,8 +58,17 @@ SymTable_T SymTable_new(void)
 void SymTable_free(SymTable_T oSymTable)
 {
    assert(oSymTable != NULL);
-   /* TODO: uvoľni každý kľúč a uzol, potom tabuľku.
-      Hodnoty NEuvoľňuj. */
+   /* Iterate through each key/node and free each before 
+   iterating to next, leave values themselves allocated */
+   while (oSymTable->psFirst != NULL)
+   {
+      struct Binding *psCurrent = oSymTable->psFirst;
+      oSymTable->psFirst = psCurrent->psNext;
+      free(psCurrent->pcKey);
+      free(psCurrent);
+   }
+   /* Free the symbol table */
+   free(oSymTable);
 }
 
 /*--------------------------------------------------------------------*/
@@ -62,8 +76,7 @@ void SymTable_free(SymTable_T oSymTable)
 size_t SymTable_getLength(SymTable_T oSymTable)
 {
    assert(oSymTable != NULL);
-   /* TODO */
-   return 0;
+   return oSymTable->uLength;
 }
 
 /*--------------------------------------------------------------------*/
@@ -71,12 +84,35 @@ size_t SymTable_getLength(SymTable_T oSymTable)
 int SymTable_put(SymTable_T oSymTable,
    const char *pcKey, const void *pvValue)
 {
+   struct Binding *psCurrent;
+   struct Binding *psNewBinding;
    assert(oSymTable != NULL);
    assert(pcKey != NULL);
-   /* TODO: 1) existuje už pcKey? -> return 0
-            2) alokuj uzol, alokuj kópiu kľúča (pri zlyhaní uprať!)
-            3) pripoj uzol, zvýš počet, return 1 */
-   return 0;
+   for (psCurrent = oSymTable->psFirst; psCurrent != NULL;
+        psCurrent = psCurrent->psNext)
+   {
+      if (strcmp(psCurrent->pcKey, pcKey) == 0)
+         return 0;
+   }
+   psNewBinding = malloc(sizeof(struct Binding));
+   if (psNewBinding == NULL)
+   {
+      return 0;
+   }
+   psNewBinding->pcKey = malloc(strlen(pcKey) + 1);
+   if (psNewBinding->pcKey == NULL)
+   {
+      free(psNewBinding);
+      return 0;
+   }
+   /* copy key and store value, then update links to next and first
+   and increment length */
+   strcpy(psNewBinding->pcKey, pcKey);
+   psNewBinding->pvValue = pvValue;
+   psNewBinding->psNext = oSymTable->psFirst;
+   oSymTable->psFirst = psNewBinding;
+   oSymTable->uLength++;
+   return 1;
 }
 
 /*--------------------------------------------------------------------*/

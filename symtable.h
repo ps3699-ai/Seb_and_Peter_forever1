@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* symtable.h                                                         */
-/* Author: Peter Strecansky and Seb ...                               */
+/* Author: Peter Strecansky and Sebastian Whiteley                    */
 /*--------------------------------------------------------------------*/
 
 #ifndef SYMTABLE_INCLUDED
