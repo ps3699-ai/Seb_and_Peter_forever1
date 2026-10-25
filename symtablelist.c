@@ -141,8 +141,8 @@ void *SymTable_replace(SymTable_T oSymTable,
    assert(oSymTable != NULL);
    assert(pcKey != NULL);
 
-   for (psCurrent = oSymTable->psFirst; psCurrent != NULL;
-        psCurrent = psCurrent->psNext)
+   for (psCurrent = oSymTable->psFirst; psCurrent != NULL; 
+      psCurrent = psCurrent->psNext)
    {
       if (strcmp(psCurrent->pcKey, pcKey) == 0)
       {
@@ -167,10 +167,12 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey)
    assert(pcKey != NULL);
    /* Traverse the list and search for a node with the given key. */
    for (psCurrent = oSymTable->psFirst; psCurrent != NULL;
-        psCurrent = psCurrent->psNext)
+      psCurrent = psCurrent->psNext)
    {
       if (strcmp(psCurrent->pcKey, pcKey) == 0)
+      {
          return 1;
+      }
    }
    /* The key was not found in the list. */
    return 0;
@@ -188,10 +190,12 @@ void *SymTable_get(SymTable_T oSymTable, const char *pcKey)
    assert(pcKey != NULL);
    /* Traverse the list and search for a node with the given key. */
    for (psCurrent = oSymTable->psFirst; psCurrent != NULL;
-        psCurrent = psCurrent->psNext)
+      psCurrent = psCurrent->psNext)
    {
       if (strcmp(psCurrent->pcKey, pcKey) == 0)
+      {
          return (void *)psCurrent->pvValue;
+      }
    }
    /* The key was not found in the list. */
    return NULL;
@@ -230,7 +234,6 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
          {
             psPrev->psNext = psCurrent->psNext;
          }
-
          /* Free the node and its key, but not the value. */
          free(psCurrent->pcKey);
          free(psCurrent);
@@ -260,9 +263,9 @@ void SymTable_map(SymTable_T oSymTable,
    assert(pfApply != NULL);
    /* calls pfApply on each binding */
    for (psCurrent = oSymTable->psFirst; psCurrent != NULL;
-        psCurrent = psCurrent->psNext)
+      psCurrent = psCurrent->psNext)
    {
       pfApply(psCurrent->pcKey, (void *)psCurrent->pvValue,
-              (void *)pvExtra);
+      (void *)pvExtra);
    }
 }
