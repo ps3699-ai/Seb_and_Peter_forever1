@@ -25,7 +25,15 @@ static const size_t uNumBucketCounts =
 
 struct Binding
 {
-   /* TODO: same 3 fields as in symtablelist.c */
+   /* The key of the binding, a defensive copy owned by the
+      SymTable. */
+   char *pcKey;
+
+   /* The value of the binding, owned by the client. */
+   const void *pvValue;
+
+   /* The address of the next Binding in the list. */
+   struct Binding *psNext;
 };
 
 /*--------------------------------------------------------------------*/
@@ -35,12 +43,15 @@ struct Binding
 
 struct SymTable
 {
-   /* TODO: comment + array of buckets (what type, if its size
-      changes at run time?) */
+   /* An array of pointers to Binding nodes. */
+   struct Binding **ppsBuckets;
 
-   /* TODO: comment + current number of buckets */
+   /* The current number of buckets in the array. */
 
-   /* TODO: comment + number of bindings (getLength in O(1)) */
+   size_t uNumBuckets;
+
+   /* The number of bindings in the table. */
+   size_t uLength;
 };
 
 /*--------------------------------------------------------------------*/
@@ -71,24 +82,62 @@ static size_t SymTable_hash(const char *pcKey, size_t uBucketCount)
 static void SymTable_expand(SymTable_T oSymTable)
 {
    assert(oSymTable != NULL);
-   /* TODO: 1) already at the max (65521)? -> do nothing
-            2) allocate the new bucket array (calloc), return on NULL
-            3) walk every old bucket and every node:
-               rehash with the NEW count, relink the node into the
-               new bucket (no malloc, no key copy!)
-            4) free the old array, store the new array and count */
+   /* If the current number of buckets is already the largest in
+      auBucketCounts, do nothing. Otherwise, find the next larger
+      bucket count, allocate a new array of that size, and rehash all
+      bindings into the new array. If any allocation fails, free any
+      memory allocated for the new array and leave oSymTable
+      unchanged. */
+   if (oSymTable->uNumBuckets >= auBucketCounts[uNumBucketCounts - 1])
+      return;
+
+   size_t uNewBucketCount = auBucketCounts[0];
+   for (size_t i = 0; i < uNumBucketCounts; i++)
+   {
+      if (auBucketCounts[i] > oSymTable->uNumBuckets)
+      {
+         uNewBucketCount = auBucketCounts[i];
+         break;
+      }
+   }
+   struct Binding **ppsNewBuckets = calloc(uNewBucketCount, sizeof(struct Binding *));
+   if (ppsNewBuckets == NULL)
+      return;
+   for (size_t i = 0; i < oSymTable->uNumBuckets; i++)
+   {
+      struct Binding *psCurrent = oSymTable->ppsBuckets[i];
+      while (psCurrent != NULL)
+      {
+         struct Binding *psNext = psCurrent->psNext;
+         size_t uNewIndex = SymTable_hash(psCurrent->pcKey, uNewBucketCount);
+         psCurrent->psNext = ppsNewBuckets[uNewIndex];
+         ppsNewBuckets[uNewIndex] = psCurrent;
+         psCurrent = psNext;
+      }
+   }
+   free(oSymTable->ppsBuckets);
+   oSymTable->ppsBuckets = ppsNewBuckets;
+   oSymTable->uNumBuckets = uNewBucketCount;
+
 }
 
 /*--------------------------------------------------------------------*/
 
-/* TODO: comment */
+/* Return a new SymTable_T object that contains no bindings, or NULL
+   if insufficient memory is available. */
 
 SymTable_T SymTable_new(void)
 {
-   /* TODO: allocate struct SymTable, then an array of 509 buckets
-      (calloc -> all NULL). If the second allocation fails, free
-      the first! */
+      struct SymTable *oSymTable = malloc(sizeof(struct SymTable));
+      if (oSymTable == NULL)
    return NULL;
+   oSymTable->uNumBuckets = auBucketCounts[0];
+   oSymTable->uLength = 0;
+   oSymTable->ppsBuckets = calloc(oSymTable->uNumBuckets, sizeof(struct Binding *));
+   if (oSymTable->ppsBuckets == NULL)
+   {
+      free(oSymTable);
+      return NULL;  
 }
 
 /*--------------------------------------------------------------------*/
