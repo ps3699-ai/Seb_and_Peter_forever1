@@ -148,7 +148,7 @@ SymTable_T SymTable_new(void)
    }
    oSymTable->uNumBuckets = auBucketCounts[0];
    oSymTable->uLength = 0;
-   oSymTable->ppsBuckets = calloc(oSymTable->uNumBuckets, 
+   oSymTable->ppsBuckets = calloc(oSymTable->uNumBuckets,
       sizeof(struct Binding *));
    if (oSymTable->ppsBuckets == NULL)
    {
@@ -170,7 +170,7 @@ void SymTable_free(SymTable_T oSymTable)
    struct Binding *psNext;
    assert(oSymTable != NULL);
 
-   /* Free each binding key/node from each bucket, 
+   /* Free each binding key/node from each bucket,
       leave the values allocated */
    for (uBucket = 0; uBucket < oSymTable->uNumBuckets; uBucket++)
    {
@@ -203,7 +203,7 @@ size_t SymTable_getLength(SymTable_T oSymTable)
 
 /* Add a new binding to oSymTable by checking first
    if it already exists, before adding a binding
-   with a copy of the key and value to the table. 
+   with a copy of the key and value to the table.
    Expand table if bindings exceeds bucket count,
    return 1 if function succeeds, 0 if not */
 
@@ -218,7 +218,7 @@ int SymTable_put(SymTable_T oSymTable,
 
    /* Hash the key to get bucket index */
    uBucket = SymTable_hash(pcKey, oSymTable->uNumBuckets);
-   /* Search through bucket for matching key, return 0 if 
+   /* Search through bucket for matching key, return 0 if
      it already exists */
    for (psCurrent = oSymTable->ppsBuckets[uBucket];
       psCurrent != NULL; psCurrent = psCurrent->psNext)
@@ -228,7 +228,7 @@ int SymTable_put(SymTable_T oSymTable,
          return 0;
       }
    }
-   /* Allocate memory for new binding, check for failure*/
+   /* Allocate memory for new binding, check for failure */
    psNewBinding = malloc(sizeof(struct Binding));
    if (psNewBinding == NULL)
    {
@@ -261,7 +261,7 @@ int SymTable_put(SymTable_T oSymTable,
 
 /*--------------------------------------------------------------------*/
 
-/* Replace the value (pvValue) associated with a key (pcKey) in 
+/* Replace the value (pvValue) associated with a key (pcKey) in
    oSymTable with a new value, if the key is not found return NULL,
    else return the old value */
 
@@ -291,7 +291,7 @@ void *SymTable_replace(SymTable_T oSymTable,
 
 /*--------------------------------------------------------------------*/
 
-/* Search oSymTable for a key (pcKey), return 1 if found, 
+/* Search oSymTable for a key (pcKey), return 1 if found,
    0 if not */
 
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey)
@@ -317,7 +317,7 @@ int SymTable_contains(SymTable_T oSymTable, const char *pcKey)
 
 /*--------------------------------------------------------------------*/
 
-/* Search oSymTable for a key (pcKey), return bound value if found, 
+/* Search oSymTable for a key (pcKey), return bound value if found,
    NULL if not */
 
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey)
@@ -357,7 +357,7 @@ void *SymTable_remove(SymTable_T oSymTable, const char *pcKey)
       if binding is found, remove and free allocated memory */
    uBucket = SymTable_hash(pcKey, oSymTable->uNumBuckets);
    for (psCurrent = oSymTable->ppsBuckets[uBucket], psPrev = NULL;
-      psCurrent != NULL; psPrev = psCurrent, 
+      psCurrent != NULL; psPrev = psCurrent,
       psCurrent = psCurrent->psNext)
    {
       if (strcmp(psCurrent->pcKey, pcKey) == 0)

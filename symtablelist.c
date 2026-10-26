@@ -141,7 +141,7 @@ void *SymTable_replace(SymTable_T oSymTable,
    assert(oSymTable != NULL);
    assert(pcKey != NULL);
 
-   for (psCurrent = oSymTable->psFirst; psCurrent != NULL; 
+   for (psCurrent = oSymTable->psFirst; psCurrent != NULL;
       psCurrent = psCurrent->psNext)
    {
       if (strcmp(psCurrent->pcKey, pcKey) == 0)
