@@ -25,14 +25,14 @@ SymTable_T SymTable_new(void);
 /*--------------------------------------------------------------------*/
 
 /* Free all the memory associated with oSymTable, including all
-keys, and the table itself. Values are not freed as they are
-owned by the client */
+   keys, and the table itself. Values are not freed as they are
+   owned by the client */
 
 void SymTable_free(SymTable_T oSymTable);
 
 /*--------------------------------------------------------------------*/
 
-/* Return the number of bindings in the symbol table. */
+/* Return the number of bindings in oSymTable. */
 
 size_t SymTable_getLength(SymTable_T oSymTable);
 
@@ -41,7 +41,7 @@ size_t SymTable_getLength(SymTable_T oSymTable);
 /* If oSymTable does not contain a binding with key pcKey, add a new
    binding consisting of key pcKey and value pvValue to oSymTable and
    return 1 (TRUE). Otherwise if pcKey already exists, leave oSymTable
-   unchanged and return 0 (FALSE). If insufficient memory is available, 
+   unchanged and return 0 (FALSE). If insufficient memory is available,
    leave oSymTable unchanged and return 0 (FALSE). */
 
 int SymTable_put(SymTable_T oSymTable,
@@ -49,36 +49,40 @@ int SymTable_put(SymTable_T oSymTable,
 
 /*--------------------------------------------------------------------*/
 
-/* Replace the value associated with the given key, pcKey, with pvValue
-if key can be found. Return a pointer to the old value, or if key is not 
-found, returnNULL and leave oSymtable unchanged. */
+/* If oSymTable has a binding with key pcKey, replace its value
+   with pvValue and return a pointer to the old value. Otherwise,
+   leave oSymTable unchanged and return NULL. */
 
 void *SymTable_replace(SymTable_T oSymTable,
    const char *pcKey, const void *pvValue);
 
 /*--------------------------------------------------------------------*/
 
-/* Return 1 if the symbol table contains the given key, pcKey, 0 otherwise. */
+/* Return 1 (TRUE) if a binding in oSymTable contains the given key,
+   pcKey, 0 (FALSE) otherwise. */
+
 int SymTable_contains(SymTable_T oSymTable, const char *pcKey);
 
 /*--------------------------------------------------------------------*/
 
 /* Return a pointer to the value associated with the given key, pcKey,
- or NULL if the key is not found. */
+   in oSymTable or NULL if the key is not found. */
+
 void *SymTable_get(SymTable_T oSymTable, const char *pcKey);
 
 /*--------------------------------------------------------------------*/
 
-/* Remove the binding with the given key, pcKey, if it exists. Return 
-a pointer to the value associated with the key, or if the key is not
-found, return NULL and leave oSymTable unchanged. */
+/* Remove the binding with the given key, pcKey, if it exists.
+   Return a pointer to the value associated with the key, or if the
+   key is not found, return NULL and leave oSymTable unchanged. */
+
 void *SymTable_remove(SymTable_T oSymTable, const char *pcKey);
 
 /*--------------------------------------------------------------------*/
 
-/* Apply the given function, *pfApply, to each binding in the symbol table 
-by calling the function with *pcKey, *pvValue, and *pvExtra for each
-binding. */
+/* Apply the given function, *pfApply, to each binding in oSymTable
+   by calling (*pfApply)(pcKey, pvValue, pvExtra) for each binding. */
+
 void SymTable_map(SymTable_T oSymTable,
    void (*pfApply)(const char *pcKey, void *pvValue, void *pvExtra),
    const void *pvExtra);
