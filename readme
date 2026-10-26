@@ -64,6 +64,20 @@ disagreements with them? Copy the splint warnings here, and express your
 disagreement after each warning. If there are no warnings, then write
 "None."
 
+Splint 3.1.2 --- 20 Aug 2022
+
+symtablelist.c: (in function SymTable_map)
+symtablelist.c:268:7: Statement has no effect: pfApply(psCurren...
+  Statement has no visible effect --- no values are modified. (Use -noeffect to
+  inhibit warning)
+
+Finished checking --- 1 code warning
+
+We got a "Statement has no effect" warning for pfApply in SymTable_map
+(line 268). We disagree with this warning as pfApply is a client
+function which modifies/interacts with each binding for some purpose.
+Splint cannot see the definition for the pfApply function (only the
+pointer), and therefore wrongly assumes it has no effect.
 
 
 ------------------------------------------------------------------------
@@ -72,6 +86,26 @@ disagreements with them? Copy the critTer warnings here, and express
 your disagreement after each warning. If there are no warnings, then
 write "None."
 
+critTer symtablehash.c
+
+Checking symtablelist.c
+
+   symtablelist.c: line 99: medium priority:
+   Do you want to validate 'pvValue' through an assert?
+
+   symtablelist.c: line 139: medium priority:
+   Do you want to validate 'pvValue' through an assert?
+
+   symtablelist.c: line 260: medium priority:
+   Do you want to validate 'pvExtra' through an assert?
+
+We disagree with the above warnings for pvValue as NULL is a potential 
+valid value for a binding, which SymTable_put should then accept.
+If we added an assert to check pvValue here we would reject
+valid calls which included NULL. We also disagree with the pvExtra 
+warning as the SymTable_map function just passes pvExtra to
+*pfApply unchanged, and NULL may be a valid pvExtra used by
+a client.
 
 
 ------------------------------------------------------------------------
@@ -80,6 +114,20 @@ disagreements with them? Copy the splint warnings here, and express your
 disagreement after each warning. If there are no warnings, then write
 "None."
 
+Splint 3.1.2 --- 20 Aug 2022
+
+symtablehash.c: (in function SymTable_map)
+symtablehash.c:405:10: Statement has no effect: pfApply(psCurren...
+  Statement has no visible effect --- no values are modified. (Use -noeffect to
+  inhibit warning)
+
+Finished checking --- 1 code warning
+
+We got a "Statement has no effect" warning for pfApply in SymTable_map
+(line 405). We disagree with this warning as pfApply is a client
+function which modifies/interacts with each binding for some purpose.
+Splint cannot see the definition for the pfApply function (only the
+pointer), and therefore wrongly assumes it has no effect.
 
 
 ------------------------------------------------------------------------
@@ -88,6 +136,24 @@ disagreements with them? Copy the critTer warnings here, and express
 your disagreement after each warning. If there are no warnings, then
 write "None."
 
+Checking symtablehash.c
+
+   symtablehash.c: line 212: medium priority:
+   Do you want to validate 'pvValue' through an assert?
+
+   symtablehash.c: line 270: medium priority:
+   Do you want to validate 'pvValue' through an assert?
+
+   symtablehash.c: line 393: medium priority:
+   Do you want to validate 'pvExtra' through an assert?
+
+We disagree with the above warnings for pvValue as NULL is a potential 
+valid value for a binding, which SymTable_put should then accept.
+If we added an assert to check pvValue here we would reject
+valid calls which included NULL. We also disagree with the pvExtra 
+warning as the SymTable_map function just passes pvExtra to
+*pfApply unchanged, and NULL may be a valid pvExtra used by
+a client. 
 
 
 ------------------------------------------------------------------------
@@ -97,22 +163,22 @@ implementation, (2) your non-expanding hash table implementation, and
 (3) your expanding hash table implementation? Fill in the blanks.
 
 The linked list implementation with:
--- 50 bindings consumed ________ seconds.
--- 500 bindings consumed ________ seconds.
--- 5000 bindings consumed ________ seconds.
--- 50000 bindings consumed ________ seconds.
--- 500000 bindings consumed ________ seconds.
+-- 50 bindings consumed 0.000000 seconds.
+-- 500 bindings consumed 0.000000 seconds.
+-- 5000 bindings consumed 0.115473 seconds.
+-- 50000 bindings consumed 17.593671 seconds.
+-- 500000 bindings consumed >300 seconds. (No time)
 
 The non-expanding hash table implementation with:
--- 50 bindings consumed ________ seconds.
--- 500 bindings consumed ________ seconds.
--- 5000 bindings consumed ________ seconds.
--- 50000 bindings consumed ________ seconds.
--- 500000 bindings consumed ________ seconds.
+-- 50 bindings consumed 0.000000 seconds.
+-- 500 bindings consumed 0.000000 seconds.
+-- 5000 bindings consumed 0.000000 seconds.
+-- 50000 bindings consumed 0.167331 seconds.
+-- 500000 bindings consumed 35.034064 seconds.
 
 The expanding hash table implementation with:
--- 50 bindings consumed ________ seconds.
--- 500 bindings consumed ________ seconds.
--- 5000 bindings consumed ________ seconds.
--- 50000 bindings consumed ________ seconds.
--- 500000 bindings consumed ________ seconds.
+-- 50 bindings consumed 0.000000 seconds.
+-- 500 bindings consumed 0.000000 seconds.
+-- 5000 bindings consumed 0.001346 seconds.
+-- 50000 bindings consumed 0.025244 seconds.
+-- 500000 bindings consumed 0.421389 seconds.
